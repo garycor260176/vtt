@@ -55,7 +55,7 @@ namespace WindowsFormsApplication2
                     SaveTodatabase(items);
                 }
                 catch (System.ServiceModel.FaultException e1)
-                {
+                { 
                     //e1.Message; куда-нить в лог
                     break;
                 }
