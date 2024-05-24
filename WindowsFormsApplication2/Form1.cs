@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
@@ -13,6 +14,8 @@ namespace WindowsFormsApplication2
 {
     public partial class Form1 : Form
     {
+        CancellationTokenSource cts; 
+
         public struct vtt_settings
         {
             public String address;
@@ -59,45 +62,94 @@ namespace WindowsFormsApplication2
             return ret;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void download()
         {
-            listBox1.Items.Clear();
-
             ini = readSettings();
-            String connStr = 
-                "server=" + ini.mysql.server + ";" + 
-                "user=" + ini.mysql.login + ";" + 
-                "database=" + ini.mysql.dbname + ";" + 
-                "port=" + ini.mysql.port + ";" + 
-                "password=" + ini.mysql.pwd + ";" 
+            String connStr =
+                "server=" + ini.mysql.server + ";" +
+                "user=" + ini.mysql.login + ";" +
+                "database=" + ini.mysql.dbname + ";" +
+                "port=" + ini.mysql.port + ";" +
+                "password=" + ini.mysql.pwd + ";"
                 ;
 
             MySqlConnection conn = new MySqlConnection(connStr);
             conn.Open();
 
             int from = 0;
+
             vtt.PortalServiceClient client = new vtt.PortalServiceClient();
             client.Endpoint.Address = new System.ServiceModel.EndpointAddress(ini.vtt.address);
+
             while (true)
             {
+                if (cts.Token.IsCancellationRequested) break;
                 int to = from + ini.vtt.size - 1;
                 try
                 {
                     vtt.ItemPortionDto items = client.GetItemPortion(ini.vtt.login, ini.vtt.pwd, from, to);
                     SaveTodatabase(conn, items);
-                    if (items.Items.Length < ini.vtt.size) 
+                    if (items.Items.Length < ini.vtt.size)
                         break;
                 }
                 catch (System.ServiceModel.FaultException e1)
                 {
-                    listBox1.Items.Add(from.ToString() + " - " + to.ToString() + ": " + e1.Message);
-
-                    //e1.Message; куда-нить в лог
+                    Invoke((MethodInvoker)delegate {
+                        listBox1.Items.Add(from.ToString() + " - " + to.ToString() + ": " + e1.Message);
+                    });
                 }
                 from = from + ini.vtt.size;
             }
+
             client.Close();
             conn.Close();
+        }
+
+        private void UploadDone()
+        {
+            toolStripMenuItem1.Enabled = true;
+            stopToolStripMenuItem.Enabled = false;
+        }
+
+        private void stop_download()
+        {
+            if (cts == null) return;
+            cts.Cancel();
+        }
+
+        private async void start_download()
+        {
+            toolStripMenuItem1.Enabled = false;
+            stopToolStripMenuItem.Enabled = true;
+            listBox1.Items.Clear();
+
+            cts = new CancellationTokenSource();
+
+            Task t = new Task(() =>
+            {
+                try
+                {
+                    download();
+                }
+                catch (Exception ex)
+                {
+
+                }
+            });
+
+            t.Start();
+
+            try { await Task.WhenAll(t); }
+            finally { UploadDone(); }
+
+/*
+            t.ContinueWith(_ =>
+            {
+                Invoke(new System.Action(UploadDone));
+            });
+*/
+            cts.Dispose();
+            cts = null;
         }
 
         private void insertItem(MySqlConnection conn, vtt.ItemDto item)
@@ -142,7 +194,23 @@ namespace WindowsFormsApplication2
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            toolStripMenuItem1.Enabled = true;
+            stopToolStripMenuItem.Enabled = false;
+        }
 
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            start_download();
+        }
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            stop_download();
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            stop_download();
         }
     }
 }
