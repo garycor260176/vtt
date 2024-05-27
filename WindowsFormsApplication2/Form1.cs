@@ -9,68 +9,33 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using System.ServiceModel;
 
 namespace WindowsFormsApplication2
 {
     public partial class Form1 : Form
     {
-        CancellationTokenSource cts; 
-
-        public struct vtt_settings
-        {
-            public String address;
-            public int size;
-            public string login;
-            public string pwd;
-        };
-        public struct msql_settings
-        {
-            public String server;
-            public string port;
-            public string login;
-            public string pwd;
-            public string dbname;
-        };
-
-        public struct settings
-        {
-            public vtt_settings vtt;
-            public msql_settings mysql;
-        };
-
-        settings ini;
+        CancellationTokenSource cts;
 
         public Form1()
         {
             InitializeComponent();
         }
 
-        private settings readSettings() //чтение настройки из какого-нить файла (xml, ini или что-то еще)
+        private config readSettings() //чтение настройки из какого-нить файла (xml, ini или что-то еще)
         {
-            settings ret;
-            ret.vtt.address = "http://api.vtt.ru:8048/Portal.svc";
-            ret.vtt.size = 20;
-            ret.vtt.login = "am-458";
-            ret.vtt.pwd = "fcv34xvysd";
-
-            ret.mysql.server = "192.168.1.40";
-            ret.mysql.port = "3306";
-            ret.mysql.login = "root";
-            ret.mysql.pwd = "iobroker";
-            ret.mysql.dbname = "vtt";
-
-            return ret;
+            return config.Read();
         }
 
         private void download()
         {
-            ini = readSettings();
+            config ini = readSettings();
             String connStr =
-                "server=" + ini.mysql.server + ";" +
-                "user=" + ini.mysql.login + ";" +
-                "database=" + ini.mysql.dbname + ";" +
-                "port=" + ini.mysql.port + ";" +
-                "password=" + ini.mysql.pwd + ";"
+                "server=" + ini.db.server + ";" +
+                "user=" + ini.db.login + ";" +
+                "database=" + ini.db.dbname + ";" +
+                "port=" + ini.db.port.ToString() + ";" +
+                "password=" + ini.db.pwd + ";"
                 ;
 
             MySqlConnection conn = new MySqlConnection(connStr);
@@ -78,9 +43,22 @@ namespace WindowsFormsApplication2
 
             int from = 0;
 
-            vtt.PortalServiceClient client = new vtt.PortalServiceClient();
-            client.Endpoint.Address = new System.ServiceModel.EndpointAddress(ini.vtt.address);
+            vtt.PortalServiceClient client;
+            try
+            {
+                BasicHttpBinding binding = new BasicHttpBinding() { MaxReceivedMessageSize = 131072 };
+                client = new vtt.PortalServiceClient(binding, new System.ServiceModel.EndpointAddress(ini.vtt.address));
+            }
+            catch (Exception e0)
+            {
+                Invoke((MethodInvoker)delegate
+                {
+                    listBox1.Items.Add("Error: " + e0.Message);
+                });
 
+                return;
+            }
+            
             while (true)
             {
                 if (cts.Token.IsCancellationRequested) break;
@@ -96,6 +74,13 @@ namespace WindowsFormsApplication2
                 {
                     Invoke((MethodInvoker)delegate {
                         listBox1.Items.Add(from.ToString() + " - " + to.ToString() + ": " + e1.Message);
+                    });
+                }
+                catch (Exception e2)
+                {
+                    Invoke((MethodInvoker)delegate
+                    {
+                        listBox1.Items.Add(from.ToString() + " - " + to.ToString() + ": " + e2.Message);
                     });
                 }
                 from = from + ini.vtt.size;
@@ -142,12 +127,6 @@ namespace WindowsFormsApplication2
             try { await Task.WhenAll(t); }
             finally { UploadDone(); }
 
-/*
-            t.ContinueWith(_ =>
-            {
-                Invoke(new System.Action(UploadDone));
-            });
-*/
             cts.Dispose();
             cts = null;
         }
@@ -211,6 +190,12 @@ namespace WindowsFormsApplication2
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             stop_download();
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frm_conf conf_frm = new frm_conf();
+            conf_frm.ShowDialog();            
         }
     }
 }
