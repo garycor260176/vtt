@@ -50,6 +50,8 @@
             this.mysql_address = new System.Windows.Forms.TextBox();
             this.ok = new System.Windows.Forms.Button();
             this.cancel = new System.Windows.Forms.Button();
+            this.OnlyError = new System.Windows.Forms.CheckBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.vtt_size)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -68,21 +70,21 @@
             this.groupBox1.Controls.Add(this.vtt_address);
             this.groupBox1.Location = new System.Drawing.Point(12, 5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(368, 121);
+            this.groupBox1.Size = new System.Drawing.Size(367, 109);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "vtt";
             // 
             // vtt_login
             // 
-            this.vtt_login.Location = new System.Drawing.Point(82, 91);
+            this.vtt_login.Location = new System.Drawing.Point(82, 79);
             this.vtt_login.Name = "vtt_login";
             this.vtt_login.Size = new System.Drawing.Size(100, 20);
             this.vtt_login.TabIndex = 2;
             // 
             // vtt_password
             // 
-            this.vtt_password.Location = new System.Drawing.Point(258, 91);
+            this.vtt_password.Location = new System.Drawing.Point(258, 79);
             this.vtt_password.Name = "vtt_password";
             this.vtt_password.PasswordChar = '*';
             this.vtt_password.Size = new System.Drawing.Size(100, 20);
@@ -90,7 +92,7 @@
             // 
             // vtt_size
             // 
-            this.vtt_size.Location = new System.Drawing.Point(82, 61);
+            this.vtt_size.Location = new System.Drawing.Point(82, 49);
             this.vtt_size.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -113,7 +115,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(197, 94);
+            this.label4.Location = new System.Drawing.Point(197, 82);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(55, 13);
             this.label4.TabIndex = 4;
@@ -122,7 +124,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 94);
+            this.label3.Location = new System.Drawing.Point(16, 82);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 3;
@@ -131,7 +133,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 63);
+            this.label2.Location = new System.Drawing.Point(16, 51);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(28, 13);
             this.label2.TabIndex = 2;
@@ -140,7 +142,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 32);
+            this.label1.Location = new System.Drawing.Point(16, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(47, 13);
             this.label1.TabIndex = 1;
@@ -148,7 +150,7 @@
             // 
             // vtt_address
             // 
-            this.vtt_address.Location = new System.Drawing.Point(82, 29);
+            this.vtt_address.Location = new System.Drawing.Point(82, 17);
             this.vtt_address.Name = "vtt_address";
             this.vtt_address.Size = new System.Drawing.Size(276, 20);
             this.vtt_address.TabIndex = 0;
@@ -167,14 +169,14 @@
             this.groupBox2.Controls.Add(this.mysql_address);
             this.groupBox2.Location = new System.Drawing.Point(12, 132);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(368, 121);
+            this.groupBox2.Size = new System.Drawing.Size(368, 104);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "mysql";
             // 
             // mysql_dbname
             // 
-            this.mysql_dbname.Location = new System.Drawing.Point(82, 56);
+            this.mysql_dbname.Location = new System.Drawing.Point(82, 48);
             this.mysql_dbname.Name = "mysql_dbname";
             this.mysql_dbname.Size = new System.Drawing.Size(100, 20);
             this.mysql_dbname.TabIndex = 6;
@@ -182,7 +184,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(16, 59);
+            this.label7.Location = new System.Drawing.Point(16, 51);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(56, 13);
             this.label7.TabIndex = 9;
@@ -190,7 +192,7 @@
             // 
             // mysql_port
             // 
-            this.mysql_port.Location = new System.Drawing.Point(300, 30);
+            this.mysql_port.Location = new System.Drawing.Point(300, 22);
             this.mysql_port.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -203,7 +205,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(268, 32);
+            this.label9.Location = new System.Drawing.Point(268, 24);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(28, 13);
             this.label9.TabIndex = 8;
@@ -211,14 +213,14 @@
             // 
             // mysql_login
             // 
-            this.mysql_login.Location = new System.Drawing.Point(82, 91);
+            this.mysql_login.Location = new System.Drawing.Point(82, 76);
             this.mysql_login.Name = "mysql_login";
             this.mysql_login.Size = new System.Drawing.Size(100, 20);
             this.mysql_login.TabIndex = 7;
             // 
             // mysql_password
             // 
-            this.mysql_password.Location = new System.Drawing.Point(258, 91);
+            this.mysql_password.Location = new System.Drawing.Point(258, 76);
             this.mysql_password.Name = "mysql_password";
             this.mysql_password.PasswordChar = '*';
             this.mysql_password.Size = new System.Drawing.Size(100, 20);
@@ -227,7 +229,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(197, 94);
+            this.label5.Location = new System.Drawing.Point(197, 79);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(55, 13);
             this.label5.TabIndex = 4;
@@ -236,7 +238,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(16, 94);
+            this.label6.Location = new System.Drawing.Point(16, 79);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(32, 13);
             this.label6.TabIndex = 3;
@@ -245,7 +247,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(16, 32);
+            this.label8.Location = new System.Drawing.Point(16, 24);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(47, 13);
             this.label8.TabIndex = 1;
@@ -253,14 +255,14 @@
             // 
             // mysql_address
             // 
-            this.mysql_address.Location = new System.Drawing.Point(82, 29);
+            this.mysql_address.Location = new System.Drawing.Point(82, 21);
             this.mysql_address.Name = "mysql_address";
             this.mysql_address.Size = new System.Drawing.Size(170, 20);
             this.mysql_address.TabIndex = 4;
             // 
             // ok
             // 
-            this.ok.Location = new System.Drawing.Point(77, 269);
+            this.ok.Location = new System.Drawing.Point(396, 12);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(75, 23);
             this.ok.TabIndex = 9;
@@ -271,12 +273,30 @@
             // cancel
             // 
             this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel.Location = new System.Drawing.Point(306, 269);
+            this.cancel.Location = new System.Drawing.Point(396, 66);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 10;
             this.cancel.Text = "Cancel";
             this.cancel.UseVisualStyleBackColor = true;
+            // 
+            // OnlyError
+            // 
+            this.OnlyError.AutoSize = true;
+            this.OnlyError.Location = new System.Drawing.Point(12, 259);
+            this.OnlyError.Name = "OnlyError";
+            this.OnlyError.Size = new System.Drawing.Size(155, 17);
+            this.OnlyError.TabIndex = 11;
+            this.OnlyError.Text = "Выводить только ошибки";
+            this.OnlyError.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Location = new System.Drawing.Point(386, 12);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(4, 264);
+            this.panel1.TabIndex = 12;
             // 
             // frm_conf
             // 
@@ -284,12 +304,14 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancel;
-            this.ClientSize = new System.Drawing.Size(393, 299);
+            this.ClientSize = new System.Drawing.Size(479, 282);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.OnlyError);
             this.Controls.Add(this.cancel);
             this.Controls.Add(this.ok);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frm_conf";
@@ -301,6 +323,7 @@
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mysql_port)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -328,5 +351,7 @@
         private System.Windows.Forms.TextBox mysql_address;
         private System.Windows.Forms.Button ok;
         private System.Windows.Forms.Button cancel;
+        private System.Windows.Forms.CheckBox OnlyError;
+        private System.Windows.Forms.Panel panel1;
     }
 }

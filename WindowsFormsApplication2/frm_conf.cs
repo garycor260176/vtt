@@ -26,6 +26,8 @@ namespace WindowsFormsApplication2
             mysql_password.Text = conf.db.pwd;
             mysql_port.Value = conf.db.port;
             mysql_address.Text = conf.db.server;
+
+            OnlyError.Checked = conf.OnlyError;
         }
 
         private void ok_Click(object sender, EventArgs e)
@@ -41,6 +43,8 @@ namespace WindowsFormsApplication2
             conf.db.login = mysql_login.Text;
             conf.db.pwd = mysql_password.Text;
             conf.db.dbname = mysql_dbname.Text;
+
+            conf.OnlyError = OnlyError.Checked;
 
             config.Save(conf);
             this.Close();

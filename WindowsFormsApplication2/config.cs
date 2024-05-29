@@ -25,10 +25,10 @@ namespace WindowsFormsApplication2
         public string dbname { get; set; }
     };
 
-    class config
+    public class config
     {
         const string filename = "settings.json";
-
+        public bool OnlyError { get; set; }
         public vtt_ini vtt;
         public db_ini db;
 
