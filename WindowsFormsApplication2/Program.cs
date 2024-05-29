@@ -12,8 +12,15 @@ namespace WindowsFormsApplication2
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
+            if (args.Length> 0 && args[0] == "/hide")
+            {
+                servVTT vtt = new servVTT(config.Read());
+                vtt.GetItemPortion_serv();
+                return;
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

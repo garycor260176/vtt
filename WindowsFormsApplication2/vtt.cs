@@ -43,7 +43,7 @@ namespace WindowsFormsApplication2
         public delegate void Evt(VttEventArgs arg);
         public event Evt Notify;
 
-        private void GetItemPortion_serv()
+        public void GetItemPortion_serv()
         {
             String connStr =
                 "server=" + ini.db.server + ";" +
@@ -72,7 +72,7 @@ namespace WindowsFormsApplication2
 
             while (true)
             {
-                if (cts.Token.IsCancellationRequested) break;
+                if (cts !=null && cts.Token.IsCancellationRequested) break;
                 int to = from + ini.vtt.size - 1;
                 try
                 {
