@@ -35,6 +35,7 @@ namespace WindowsFormsApplication2
         public config()
         {
             vtt = new vtt_ini();
+
             db = new db_ini(); 
         }
 
