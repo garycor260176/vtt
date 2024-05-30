@@ -25,40 +25,50 @@ namespace WindowsFormsApplication2
             return config.Read();
         }
 
+        private void StateMenuItems(Boolean state){
+            stopMenu.Enabled = !state;
+
+            GetItemPortionMenu.Enabled =
+            GetCategoriesMenu.Enabled = state;
+        }
+
         private void DisplayMessage(VttEventArgs arg)
         {
             Invoke((MethodInvoker)delegate
             {
-                listBox1.Items.Add(arg.command + (arg.type.Length == 0 ? "" : " - " + arg.type) + ": " + arg.message);
+                listBox1.Items.Add(arg.message);
             });
-            if (arg.message == "Завершено!" || arg.message == "Прервано.")
+            if (arg.done)
             {
-                toolStripMenuItem1.Enabled = true;
-                stopToolStripMenuItem.Enabled = false;
+                StateMenuItems(true);
             }
         }
 
-        private void start_download()
+        private void GetItemPortion()
         {
-            toolStripMenuItem1.Enabled = false;
-            stopToolStripMenuItem.Enabled = true;
+            StateMenuItems(false);
             listBox1.Items.Clear();
 
             Stop_vtt();
-            VTT = new servVTT(readSettings());
+            VTT = new servVTT(readSettings(), "GetItemPortion");
             VTT.Notify += DisplayMessage;
             VTT.GetItemPortion();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void GetCategories()
         {
-            toolStripMenuItem1.Enabled = true;
-            stopToolStripMenuItem.Enabled = false;
+            StateMenuItems(false);
+            listBox1.Items.Clear();
+
+            Stop_vtt();
+            VTT = new servVTT(readSettings(), "GetCategories");
+            VTT.Notify += DisplayMessage;
+            VTT.GetCategories();
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
-            start_download();
+            StateMenuItems(true);
         }
 
         private void Stop_vtt()
@@ -80,6 +90,16 @@ namespace WindowsFormsApplication2
         {
             frm_conf conf_frm = new frm_conf();
             conf_frm.ShowDialog();            
+        }
+
+        private void getItemPortionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GetItemPortion();
+        }
+
+        private void getCategoriesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GetCategories();
         }
     }
 }
