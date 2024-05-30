@@ -8,6 +8,18 @@ namespace WindowsFormsApplication2
 {
     static class Program
     {
+        static void GetItemPortion()
+        {
+            servVTT vtt = new servVTT(config.Read(), "GetItemPortion");
+            vtt.GetItemPortion_serv(true);
+        }
+
+        static void GetCategories()
+        {
+            servVTT vtt = new servVTT(config.Read(), "GetCategories");
+            vtt.GetCategories_serv(true);
+        }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -16,8 +28,8 @@ namespace WindowsFormsApplication2
         {
             if (args.Length> 0 && args[0] == "/hide")
             {
-                servVTT vtt = new servVTT(config.Read());
-                vtt.GetItemPortion_serv();
+                GetCategories();
+                GetItemPortion();
                 return;
             }
 

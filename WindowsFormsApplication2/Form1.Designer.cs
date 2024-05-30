@@ -30,8 +30,10 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.GetItemPortionMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.GetCategoriesMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -40,8 +42,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1,
-            this.stopToolStripMenuItem,
-            this.settingsToolStripMenuItem});
+            this.stopMenu,
+            this.settingsMenu});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(951, 24);
@@ -50,24 +52,40 @@
             // 
             // toolStripMenuItem1
             // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.GetItemPortionMenu,
+            this.GetCategoriesMenu});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(43, 20);
             this.toolStripMenuItem1.Text = "Start";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
-            // stopToolStripMenuItem
+            // GetItemPortionMenu
             // 
-            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-            this.stopToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
-            this.stopToolStripMenuItem.Text = "Stop";
-            this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
+            this.GetItemPortionMenu.Name = "GetItemPortionMenu";
+            this.GetItemPortionMenu.Size = new System.Drawing.Size(155, 22);
+            this.GetItemPortionMenu.Text = "GetItemPortion";
+            this.GetItemPortionMenu.Click += new System.EventHandler(this.getItemPortionToolStripMenuItem_Click);
             // 
-            // settingsToolStripMenuItem
+            // GetCategoriesMenu
             // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+            this.GetCategoriesMenu.Name = "GetCategoriesMenu";
+            this.GetCategoriesMenu.Size = new System.Drawing.Size(155, 22);
+            this.GetCategoriesMenu.Text = "GetCategories";
+            this.GetCategoriesMenu.Click += new System.EventHandler(this.getCategoriesToolStripMenuItem_Click);
+            // 
+            // stopMenu
+            // 
+            this.stopMenu.Name = "stopMenu";
+            this.stopMenu.Size = new System.Drawing.Size(43, 20);
+            this.stopMenu.Text = "Stop";
+            this.stopMenu.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
+            // 
+            // settingsMenu
+            // 
+            this.settingsMenu.Name = "settingsMenu";
+            this.settingsMenu.Size = new System.Drawing.Size(61, 20);
+            this.settingsMenu.Text = "Settings";
+            this.settingsMenu.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // listBox1
             // 
@@ -101,9 +119,11 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stopMenu;
         private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsMenu;
+        private System.Windows.Forms.ToolStripMenuItem GetItemPortionMenu;
+        private System.Windows.Forms.ToolStripMenuItem GetCategoriesMenu;
     }
 }
 

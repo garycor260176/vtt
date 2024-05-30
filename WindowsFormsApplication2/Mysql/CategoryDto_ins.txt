@@ -1,0 +1,17 @@
+CREATE DEFINER=`root`@`%` PROCEDURE `CategoryDto_ins`(
+aId varchar(50),
+aParentId varchar(50),
+aName varchar(200)
+)
+BEGIN
+DECLARE parId varchar(50);
+	set parId = (select Id from CategoryDto where Id = aId);
+    IF parId is NULL THEN
+		insert into CategoryDto (Id, ParentId, Name) values (aId, aParentId, aName);
+    ELSE
+		update CategoryDto 
+			SET ParentId = aParentId,
+				Name = aName
+			where Id = aId;
+    END IF;
+END

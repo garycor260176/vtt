@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.ServiceModel;
 using System.Data;
+using System.IO;
 
 namespace WindowsFormsApplication2
 {
@@ -15,12 +16,14 @@ namespace WindowsFormsApplication2
         public String type { get; set; }
         public String command { get; set; }
         public String message { get; set; }
+        public bool done { get; set; }
 
-        public VttEventArgs(String _command, String _type, String _message)
+        public VttEventArgs(String _command, String _type, String _message, bool _done = false)
         {
             command = _command;
             type = _type;
             message = _message;
+            done = _done;
         }
     }
 
@@ -28,10 +31,15 @@ namespace WindowsFormsApplication2
     {
         private config ini;
         CancellationTokenSource cts;
+        filelogger logger;
+        String command;
 
-        public servVTT(config _ini)
+        public servVTT(config _ini, String _command)
         {
+            command = _command;
             ini = _ini;
+            logger = new filelogger();
+            logger.filePath = logger.GenerateFilename(command, "txt");
         }
 
         public void Cancel()
@@ -43,8 +51,15 @@ namespace WindowsFormsApplication2
         public delegate void Evt(VttEventArgs arg);
         public event Evt Notify;
 
-        public void GetItemPortion_serv()
+        private void SendMessage(filelogger logger, VttEventArgs arg) {
+            arg.message = DateTime.Now.ToLongTimeString() + ": " + arg.message;
+            if(logger != null) logger.Log(arg.message);
+            if (Notify != null) Notify(arg);
+        }
+
+        private MySqlConnection OpenDB()
         {
+            MySqlConnection ret;
             String connStr =
                 "server=" + ini.db.server + ";" +
                 "user=" + ini.db.login + ";" +
@@ -52,24 +67,51 @@ namespace WindowsFormsApplication2
                 "port=" + ini.db.port.ToString() + ";" +
                 "password=" + ini.db.pwd + ";"
                 ;
+            ret = new MySqlConnection(connStr);
+            try
+            {
+                ret.Open();
+            }
+            catch (InvalidOperationException e00)
+            {
+                SendMessage(logger, new VttEventArgs(command, "Error", e00.Message));
+                ret = null;
+            }
+            catch (MySqlException e01)
+            {
+                SendMessage(logger, new VttEventArgs(command, "Error", e01.Message));
+                ret = null;
+            }
 
-            MySqlConnection conn = new MySqlConnection(connStr);
-            conn.Open();
+            return ret;
+        }
 
-            int from = 0;
-
-            vtt.PortalServiceClient client;
+        private vtt.PortalServiceClient OpenVtt()
+        {
+            vtt.PortalServiceClient ret = null;
             try
             {
                 BasicHttpBinding binding = new BasicHttpBinding() { MaxReceivedMessageSize = 131072 };
-                client = new vtt.PortalServiceClient(binding, new System.ServiceModel.EndpointAddress(ini.vtt.address));
+                ret = new vtt.PortalServiceClient(binding, new System.ServiceModel.EndpointAddress(ini.vtt.address));
             }
             catch (Exception e0)
             {
-                if (Notify != null) Notify(new VttEventArgs("GetItemPortion", "Error", e0.Message));
-                return;
+                SendMessage(logger, new VttEventArgs(command, "Error", e0.Message));
             }
+            return ret;
+        }
 
+        public void GetItemPortion_serv(Boolean hide = false)
+        {
+            SendMessage(logger, new VttEventArgs(command, "", "Начало обработки"));
+
+            MySqlConnection conn = OpenDB();
+            if (conn == null) return;
+
+            vtt.PortalServiceClient client = OpenVtt();
+            if (client == null) return;
+
+            int from = 0;
             while (true)
             {
                 if (cts !=null && cts.Token.IsCancellationRequested) break;
@@ -77,18 +119,18 @@ namespace WindowsFormsApplication2
                 try
                 {
                     vtt.ItemPortionDto items = client.GetItemPortion(ini.vtt.login, ini.vtt.pwd, from, to);
-                    SaveTodatabase(conn, items);
-                    if(!ini.OnlyError) if (Notify != null) Notify(new VttEventArgs("GetItemPortion", "Success", "[" + from.ToString() + " - " + to.ToString() + "] Загружено!"));
+                    SaveItemPortion(conn, items);
+                    if (!ini.OnlyError) SendMessage(logger, new VttEventArgs(command, "Success", "[" + from.ToString() + " - " + to.ToString() + "] Загружено!"));
                     if (items.Items.Length < ini.vtt.size)
                         break;
                 }
                 catch (System.ServiceModel.FaultException e1)
                 {
-                    if (Notify != null) Notify(new VttEventArgs("GetItemPortion", "Error", "[" + from.ToString() + " - " + to.ToString() + "] " + e1.Message));
+                    SendMessage(logger, new VttEventArgs(command, "Error", "[" + from.ToString() + " - " + to.ToString() + "] " + e1.Message));
                 }
                 catch (Exception e2)
                 {
-                    if (Notify != null) Notify(new VttEventArgs("GetItemPortion", "Error", "[" + from.ToString() + " - " + to.ToString() + "] " + e2.Message));
+                    SendMessage(logger, new VttEventArgs(command, "Error", "[" + from.ToString() + " - " + to.ToString() + "] " + e2.Message));
                 }
                 from = from + ini.vtt.size;
             }
@@ -97,7 +139,36 @@ namespace WindowsFormsApplication2
             conn.Close();
         }
 
-        public async void GetItemPortion()
+        public void GetCategories_serv(Boolean hide = false)
+        {
+            SendMessage(logger, new VttEventArgs(command, "", "Начало обработки"));
+
+            MySqlConnection conn = OpenDB();
+            if (conn == null) return;
+
+            vtt.PortalServiceClient client = OpenVtt();
+            if (client == null) return;
+
+            if (cts !=null && cts.Token.IsCancellationRequested) return;
+            try
+            {
+                vtt.CategoryDto[] cats = client.GetCategories(ini.vtt.login, ini.vtt.pwd);
+                SaveCategory(conn, cats);
+                if (!ini.OnlyError) SendMessage(logger, new VttEventArgs(command, "Success", "Загружено!"));
+            }
+            catch (System.ServiceModel.FaultException e1)
+            {
+                SendMessage(logger, new VttEventArgs(command, "Error", e1.Message));
+            }
+            catch (Exception e2)
+            {
+                SendMessage(logger, new VttEventArgs(command, "Error", e2.Message));
+            }
+            client.Close();
+            conn.Close();
+        }
+
+        public async void CallService(Action method)
         {
             cts = new CancellationTokenSource();
 
@@ -105,11 +176,11 @@ namespace WindowsFormsApplication2
             {
                 try
                 {
-                    GetItemPortion_serv();
+                    method();
                 }
                 catch (Exception ex)
                 {
-                    if (Notify != null) Notify(new VttEventArgs("GetItemPortion", "Error",ex.Message));
+                    SendMessage(logger, new VttEventArgs(command, "Error", ex.Message));
                 }
             });
 
@@ -122,22 +193,51 @@ namespace WindowsFormsApplication2
             cts = null;
         }
 
-        private void UploadDone()
+        public void GetItemPortion()
+        {
+            CallService( () => GetItemPortion_serv(false) );
+        }
+
+        public void GetCategories()
+        {
+            CallService(() => GetCategories_serv(false));
+        }
+
+         private void UploadDone()
         {
             String msg;
             if (cts.Token.IsCancellationRequested)
             {
-                msg = "Прервано.";
-                if (Notify != null) Notify(new VttEventArgs("GetItemPortion", "", msg));
+                msg = "Обработка прервана";
+                SendMessage(logger, new VttEventArgs(command, "", msg, true));
             }
             else
             {
-                msg = "Завершено!";
-                if(!ini.OnlyError) if (Notify != null) Notify(new VttEventArgs("GetItemPortion", "", msg));
+                msg = "Обработка завершена";
+                SendMessage(logger, new VttEventArgs(command, "", msg, true));
             }
         }
 
-        private void SaveTodatabase(MySqlConnection conn, vtt.ItemPortionDto items)
+         private void SaveCategory(MySqlConnection conn, vtt.CategoryDto[] cats)
+         {
+            for (int i = 0; i < cats.Length; i++)
+            {
+                insertCat(conn, cats[i]);
+            }
+
+         }
+
+         private void insertCat(MySqlConnection conn, vtt.CategoryDto cat)
+         {
+             MySqlCommand cmd = new MySqlCommand("CategoryDto_ins", conn);
+             cmd.CommandType = CommandType.StoredProcedure;
+             cmd.Parameters.AddWithValue("aId", cat.Id);
+             cmd.Parameters.AddWithValue("aParentId", cat.ParentId);
+             cmd.Parameters.AddWithValue("aName", cat.Name);
+             cmd.ExecuteNonQuery();
+         }
+
+         private void SaveItemPortion(MySqlConnection conn, vtt.ItemPortionDto items)
         {
             for (int i = 0; i < items.Items.Length; i++)
             {
