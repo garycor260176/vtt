@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using System.ServiceModel;
+using MSScriptControl;
 
 namespace WindowsFormsApplication2
 {
@@ -94,6 +95,15 @@ namespace WindowsFormsApplication2
 
         private void getItemPortionToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
+            /*
+            MSScriptControl.ScriptControl sc = new MSScriptControl.ScriptControl();
+            sc.Language = "VBScript";
+            string expression = "1 + 2 * 7";
+            object result = sc.Eval(expression);
+            MessageBox.Show(result.ToString());
+            */
+
             GetItemPortion();
         }
 
