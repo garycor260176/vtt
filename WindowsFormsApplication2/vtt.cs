@@ -53,7 +53,7 @@ namespace WindowsFormsApplication2
 
         private void SendMessage(filelogger logger, VttEventArgs arg) {
             arg.message = DateTime.Now.ToLongTimeString() + ": " + arg.message;
-            if(logger != null) logger.Log(arg.message);
+            if(ini.LogToFile && logger != null) logger.Log(arg.message);
             if (Notify != null) Notify(arg);
         }
 

@@ -52,6 +52,7 @@
             this.cancel = new System.Windows.Forms.Button();
             this.OnlyError = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.LogToFile = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.vtt_size)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -298,13 +299,24 @@
             this.panel1.Size = new System.Drawing.Size(4, 264);
             this.panel1.TabIndex = 12;
             // 
+            // LogToFile
+            // 
+            this.LogToFile.AutoSize = true;
+            this.LogToFile.Location = new System.Drawing.Point(188, 259);
+            this.LogToFile.Name = "LogToFile";
+            this.LogToFile.Size = new System.Drawing.Size(136, 17);
+            this.LogToFile.TabIndex = 13;
+            this.LogToFile.Text = "Логгирование в файл";
+            this.LogToFile.UseVisualStyleBackColor = true;
+            // 
             // frm_conf
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancel;
-            this.ClientSize = new System.Drawing.Size(479, 282);
+            this.ClientSize = new System.Drawing.Size(479, 301);
+            this.Controls.Add(this.LogToFile);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.OnlyError);
             this.Controls.Add(this.cancel);
@@ -353,5 +365,6 @@
         private System.Windows.Forms.Button cancel;
         private System.Windows.Forms.CheckBox OnlyError;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.CheckBox LogToFile;
     }
 }

@@ -28,6 +28,7 @@ namespace WindowsFormsApplication2
             mysql_address.Text = conf.db.server;
 
             OnlyError.Checked = conf.OnlyError;
+            LogToFile.Checked = conf.LogToFile;
         }
 
         private void ok_Click(object sender, EventArgs e)
@@ -45,6 +46,7 @@ namespace WindowsFormsApplication2
             conf.db.dbname = mysql_dbname.Text;
 
             conf.OnlyError = OnlyError.Checked;
+            conf.LogToFile = LogToFile.Checked;
 
             config.Save(conf);
             this.Close();

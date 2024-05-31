@@ -29,7 +29,10 @@ namespace WindowsFormsApplication2
     {
         const string filename = "settings.json";
         public bool OnlyError { get; set; }
+        public bool LogToFile { get; set; }
+
         public vtt_ini vtt;
+
         public db_ini db;
 
         public config()
