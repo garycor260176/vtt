@@ -30,9 +30,15 @@ namespace WindowsFormsApplication2
     public class servVTT
     {
         private config ini;
-        CancellationTokenSource cts;
-        filelogger logger;
-        String command;
+        private CancellationTokenSource cts;
+        private filelogger logger;
+        private String command;
+        private db mysql;
+
+        private void DB_Message(String message)
+        {
+            SendMessage(logger, new VttEventArgs(command, "Error", message));
+        }
 
         public servVTT(config _ini, String _command)
         {
@@ -40,6 +46,9 @@ namespace WindowsFormsApplication2
             ini = _ini;
             logger = new filelogger();
             logger.filePath = logger.GenerateFilename(command, "txt");
+
+            mysql = new db();
+            mysql.Notify += DB_Message;
         }
 
         public void Cancel()
@@ -55,35 +64,6 @@ namespace WindowsFormsApplication2
             arg.message = DateTime.Now.ToLongTimeString() + ": " + arg.message;
             if(ini.LogToFile && logger != null) logger.Log(arg.message);
             if (Notify != null) Notify(arg);
-        }
-
-        private MySqlConnection OpenDB()
-        {
-            MySqlConnection ret;
-            String connStr =
-                "server=" + ini.db.server + ";" +
-                "user=" + ini.db.login + ";" +
-                "database=" + ini.db.dbname + ";" +
-                "port=" + ini.db.port.ToString() + ";" +
-                "password=" + ini.db.pwd + ";"
-                ;
-            ret = new MySqlConnection(connStr);
-            try
-            {
-                ret.Open();
-            }
-            catch (InvalidOperationException e00)
-            {
-                SendMessage(logger, new VttEventArgs(command, "Error", e00.Message));
-                ret = null;
-            }
-            catch (MySqlException e01)
-            {
-                SendMessage(logger, new VttEventArgs(command, "Error", e01.Message));
-                ret = null;
-            }
-
-            return ret;
         }
 
         private vtt.PortalServiceClient OpenVtt()
@@ -105,8 +85,7 @@ namespace WindowsFormsApplication2
         {
             SendMessage(logger, new VttEventArgs(command, "", "Начало обработки"));
 
-            MySqlConnection conn = OpenDB();
-            if (conn == null) return;
+            if (mysql.OpenDB() == db.OpenResult.Error) return;
 
             vtt.PortalServiceClient client = OpenVtt();
             if (client == null) return;
@@ -119,7 +98,7 @@ namespace WindowsFormsApplication2
                 try
                 {
                     vtt.ItemPortionDto items = client.GetItemPortion(ini.vtt.login, ini.vtt.pwd, from, to);
-                    SaveItemPortion(conn, items);
+                    SaveItemPortion(items);
                     if (!ini.OnlyError) SendMessage(logger, new VttEventArgs(command, "Success", "[" + from.ToString() + " - " + to.ToString() + "] Загружено!"));
                     if (items.Items.Length < ini.vtt.size)
                         break;
@@ -136,15 +115,14 @@ namespace WindowsFormsApplication2
             }
 
             client.Close();
-            conn.Close();
+            mysql.CloseDB();
         }
 
         public void GetCategories_serv(Boolean hide = false)
         {
             SendMessage(logger, new VttEventArgs(command, "", "Начало обработки"));
 
-            MySqlConnection conn = OpenDB();
-            if (conn == null) return;
+            if (mysql.OpenDB() == db.OpenResult.Error) return;
 
             vtt.PortalServiceClient client = OpenVtt();
             if (client == null) return;
@@ -153,7 +131,7 @@ namespace WindowsFormsApplication2
             try
             {
                 vtt.CategoryDto[] cats = client.GetCategories(ini.vtt.login, ini.vtt.pwd);
-                SaveCategory(conn, cats);
+                SaveCategory(cats);
                 if (!ini.OnlyError) SendMessage(logger, new VttEventArgs(command, "Success", "Загружено!"));
             }
             catch (System.ServiceModel.FaultException e1)
@@ -165,7 +143,7 @@ namespace WindowsFormsApplication2
                 SendMessage(logger, new VttEventArgs(command, "Error", e2.Message));
             }
             client.Close();
-            conn.Close();
+            mysql.CloseDB();
         }
 
         public async void CallService(Action method)
@@ -218,63 +196,21 @@ namespace WindowsFormsApplication2
             }
         }
 
-         private void SaveCategory(MySqlConnection conn, vtt.CategoryDto[] cats)
+         private void SaveCategory(vtt.CategoryDto[] cats)
          {
             for (int i = 0; i < cats.Length; i++)
             {
-                insertCat(conn, cats[i]);
+                mysql.insertCat(cats[i]);
             }
 
          }
 
-         private void insertCat(MySqlConnection conn, vtt.CategoryDto cat)
-         {
-             MySqlCommand cmd = new MySqlCommand("CategoryDto_ins", conn);
-             cmd.CommandType = CommandType.StoredProcedure;
-             cmd.Parameters.AddWithValue("aId", cat.Id);
-             cmd.Parameters.AddWithValue("aParentId", cat.ParentId);
-             cmd.Parameters.AddWithValue("aName", cat.Name);
-             cmd.ExecuteNonQuery();
-         }
-
-         private void SaveItemPortion(MySqlConnection conn, vtt.ItemPortionDto items)
+         private void SaveItemPortion(vtt.ItemPortionDto items)
         {
             for (int i = 0; i < items.Items.Length; i++)
             {
-                insertItem(conn, items.Items[i]);
+                mysql.insertItem(items.Items[i]);
             }
-        }
-
-        private void insertItem(MySqlConnection conn, vtt.ItemDto item)
-        {
-            MySqlCommand cmd = new MySqlCommand("vtt_ins", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("aid", item.Id);
-            cmd.Parameters.AddWithValue("aName", item.Name);
-            cmd.Parameters.AddWithValue("aBrand", item.Brand);
-            cmd.Parameters.AddWithValue("aDescription", item.Description);
-            cmd.Parameters.AddWithValue("aGroup", item.Group);
-            cmd.Parameters.AddWithValue("aRootGroup", item.RootGroup);
-            cmd.Parameters.AddWithValue("aAvailableQuantity", item.AvailableQuantity);
-            cmd.Parameters.AddWithValue("aTransitQuantity", item.TransitQuantity);
-            cmd.Parameters.AddWithValue("aPrice", item.Price);
-            cmd.Parameters.AddWithValue("aPriceRetail", item.PriceRetail);
-            cmd.Parameters.AddWithValue("aWidth", item.Width);
-            cmd.Parameters.AddWithValue("aHeight", item.Height);
-            cmd.Parameters.AddWithValue("aDepth", item.Depth);
-            cmd.Parameters.AddWithValue("aWeight", item.Weight);
-            cmd.Parameters.AddWithValue("aPhotoUrl", item.PhotoUrl);
-            cmd.Parameters.AddWithValue("aOriginalNumber", item.OriginalNumber);
-            cmd.Parameters.AddWithValue("aVendor", item.Vendor);
-            cmd.Parameters.AddWithValue("aCompatibility", item.Compatibility);
-            cmd.Parameters.AddWithValue("aBarcode", item.Barcode);
-            cmd.Parameters.AddWithValue("aMainOfficeQuantity", item.MainOfficeQuantity);
-            cmd.Parameters.AddWithValue("aNumberInPackage", item.NumberInPackage);
-            cmd.Parameters.AddWithValue("aColorName", item.ColorName);
-            cmd.Parameters.AddWithValue("aTransitDate", item.TransitDate);
-            cmd.Parameters.AddWithValue("aItemLifeTime", item.ItemLifeTime);
-            cmd.Parameters.AddWithValue("aNameAlias", item.NameAlias);
-            cmd.ExecuteNonQuery();
         }
     }
 }

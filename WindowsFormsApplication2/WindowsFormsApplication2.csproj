@@ -71,12 +71,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="config.cs" />
+    <Compile Include="db.cs" />
     <Compile Include="filelogger.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frm_category.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_category.Designer.cs">
+      <DependentUpon>frm_category.cs</DependentUpon>
     </Compile>
     <Compile Include="frm_conf.cs">
       <SubType>Form</SubType>
@@ -94,6 +101,9 @@
     <Compile Include="vtt.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_category.resx">
+      <DependentUpon>frm_category.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frm_conf.resx">
       <DependentUpon>frm_conf.cs</DependentUpon>

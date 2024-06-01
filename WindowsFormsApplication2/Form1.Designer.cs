@@ -28,27 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.Category = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.GetItemPortionMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.GetCategoriesMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.stopMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.данныеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CategoryMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.menuStrip1.SuspendLayout();
+            this.Category.SuspendLayout();
             this.SuspendLayout();
             // 
-            // menuStrip1
+            // Category
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Category.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1,
             this.stopMenu,
-            this.settingsMenu});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(951, 24);
-            this.menuStrip1.TabIndex = 4;
-            this.menuStrip1.Text = "menuStrip1";
+            this.settingsMenu,
+            this.данныеToolStripMenuItem});
+            this.Category.Location = new System.Drawing.Point(0, 0);
+            this.Category.Name = "Category";
+            this.Category.Size = new System.Drawing.Size(951, 24);
+            this.Category.TabIndex = 4;
+            this.Category.Text = "Категории";
             // 
             // toolStripMenuItem1
             // 
@@ -87,6 +90,21 @@
             this.settingsMenu.Text = "Settings";
             this.settingsMenu.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
+            // данныеToolStripMenuItem
+            // 
+            this.данныеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CategoryMenu});
+            this.данныеToolStripMenuItem.Name = "данныеToolStripMenuItem";
+            this.данныеToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
+            this.данныеToolStripMenuItem.Text = "Данные";
+            // 
+            // CategoryMenu
+            // 
+            this.CategoryMenu.Name = "CategoryMenu";
+            this.CategoryMenu.Size = new System.Drawing.Size(140, 22);
+            this.CategoryMenu.Text = "Категории...";
+            this.CategoryMenu.Click += new System.EventHandler(this.CategoryMenu_Click);
+            // 
             // listBox1
             // 
             this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -102,14 +120,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(951, 620);
             this.Controls.Add(this.listBox1);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
+            this.Controls.Add(this.Category);
+            this.MainMenuStrip = this.Category;
             this.Name = "Form1";
             this.Text = "vtt";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.Category.ResumeLayout(false);
+            this.Category.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -117,13 +135,15 @@
 
         #endregion
 
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip Category;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem stopMenu;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.ToolStripMenuItem settingsMenu;
         private System.Windows.Forms.ToolStripMenuItem GetItemPortionMenu;
         private System.Windows.Forms.ToolStripMenuItem GetCategoriesMenu;
+        private System.Windows.Forms.ToolStripMenuItem данныеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CategoryMenu;
     }
 }
 

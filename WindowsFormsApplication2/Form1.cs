@@ -95,21 +95,18 @@ namespace WindowsFormsApplication2
 
         private void getItemPortionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            /*
-            MSScriptControl.ScriptControl sc = new MSScriptControl.ScriptControl();
-            sc.Language = "VBScript";
-            string expression = "1 + 2 * 7";
-            object result = sc.Eval(expression);
-            MessageBox.Show(result.ToString());
-            */
-
             GetItemPortion();
         }
 
         private void getCategoriesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GetCategories();
+        }
+
+        private void CategoryMenu_Click(object sender, EventArgs e)
+        {
+            frm_category frm = new frm_category();
+            frm.ShowDialog();
         }
     }
 }
