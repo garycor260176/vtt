@@ -47,6 +47,7 @@ namespace WindowsFormsApplication2
                 TreeNode child = new TreeNode
                 {
                     Text = node.Name,
+                    ForeColor = (node.cntkoefs > 0 ? Color.Black : Color.Red),
                     Tag = node
                 };
                 if (ParentId.Length == 0)
@@ -70,7 +71,6 @@ namespace WindowsFormsApplication2
         {
             tree.CollapseAll();
         }
-
 
         private List<db.CatKoef> GetKoeff(db.CatNode node){
             if (!node.selectedKoef)
@@ -118,6 +118,7 @@ namespace WindowsFormsApplication2
             node.koefs.Add(new db.CatKoef(node.Id, 0,0,0));
             refresh();
             GridKoef.CurrentCell = GridKoef.Rows[node.koefs.Count-1].Cells[2];
+            RecalcColorNode();
         }
 
         private void DelKoef_Click(object sender, EventArgs e)
@@ -131,6 +132,7 @@ namespace WindowsFormsApplication2
                 }
             }
             refresh();
+            RecalcColorNode();
         }
 
         private Boolean CheckNode(db.CatNode node)
@@ -201,6 +203,32 @@ namespace WindowsFormsApplication2
         {
             if (!checlAllNodes()) return;
             SaveNodes();
+        }
+
+        private void GridKoef_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            if (GridKoef.IsCurrentCellDirty)
+            {
+                GridKoef.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            }
+        }
+
+        private void RecalcColorNode()
+        {
+            tree.SelectedNode.ForeColor = Color.Red;
+            List<db.CatKoef> koefs = GetSelectedNode().koefs;
+            int cnt = 0;
+            for (int i = 0; i < koefs.Count; i++)
+            {
+                if (db.IsEmptyKoef(koefs[i])) continue;
+                cnt++;
+            }
+            if(cnt > 0) tree.SelectedNode.ForeColor = Color.Black;
+        }
+
+        private void GridKoef_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            RecalcColorNode();
         }
 
     }

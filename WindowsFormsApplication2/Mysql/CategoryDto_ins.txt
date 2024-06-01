@@ -160,7 +160,8 @@ BEGIN
             FROM
                 `vtt`.`CategoryDto`
             WHERE
-                (`vtt`.`CategoryDto`.`ParentId` = `sc`.`Id`)) AS `childcount`
+                (`vtt`.`CategoryDto`.`ParentId` = `sc`.`Id`)) AS `childcount`,
+		(SELECT COUNT(sprice) from koef where CatId = `sc`.`Id`) as countkoefs
     FROM
         `vtt`.`CategoryDto` `sc`
     WHERE

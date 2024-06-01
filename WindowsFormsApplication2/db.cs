@@ -27,17 +27,19 @@ namespace WindowsFormsApplication2
 
         public class CatNode
         {
-            public CatNode(String _Id, String _ParentId, String _Name, int _childs)
+            public CatNode(String _Id, String _ParentId, String _Name, int _childs, int _cntkoefs)
             {
                 Id = _Id;
                 ParentId = _ParentId;
                 Name = _Name;
                 childs = _childs;
+                cntkoefs = _cntkoefs;
             }
             public String Id { get; set; }
             public String ParentId { get; set; }
             public String Name { get; set; }
             public int childs { get; set; }
+            public int cntkoefs { get; set; }
             public List<CatKoef> koefs { get; set; }
 
             public Boolean selectedKoef;
@@ -249,7 +251,7 @@ namespace WindowsFormsApplication2
                 MySqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    ret.Add(new CatNode(reader["Id"].ToString(), reader["ParentId"].ToString(), reader["Name"].ToString(), Convert.ToInt16(reader["childcount"])));
+                    ret.Add(new CatNode(reader["Id"].ToString(), reader["ParentId"].ToString(), reader["Name"].ToString(), Convert.ToInt16(reader["childcount"]), Convert.ToInt16(reader["countkoefs"])));
                 }
                 reader.Close();
             }
