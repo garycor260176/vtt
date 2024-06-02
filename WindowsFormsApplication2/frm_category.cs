@@ -361,6 +361,7 @@ namespace WindowsFormsApplication2
             {
                 TreeNode child = new TreeNode
                 {
+                    ForeColor = (i.cntkoefs > 0 ? Color.Black : Color.Red),
                     Tag = new db.NodeT(db.TypeNode.item, null, i),
                     ImageIndex = 1,
                     SelectedImageIndex = 1,
