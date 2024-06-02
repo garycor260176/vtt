@@ -382,6 +382,23 @@ namespace WindowsFormsApplication2
                     break;
             }
         }
+        private void GridKoef_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            GridKoef.Rows[e.RowIndex].ErrorText =
+                GridKoef.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "";
+        }
 
+        private void GridKoef_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            object editedValue = GridKoef[e.ColumnIndex, e.RowIndex].EditedFormattedValue;
+            float temp;
+            if (!float.TryParse(editedValue.ToString(), out temp))
+            {
+                GridKoef.Rows[e.RowIndex].ErrorText = 
+                    GridKoef.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "Ошибка ввода";
+                e.Cancel = true;
+                e.ThrowException = false;
+            }
+        }
     }
 }

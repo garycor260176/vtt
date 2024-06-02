@@ -165,8 +165,10 @@
             this.GridKoef.Name = "GridKoef";
             this.GridKoef.Size = new System.Drawing.Size(411, 406);
             this.GridKoef.TabIndex = 0;
+            this.GridKoef.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.GridKoef_CellValidating);
             this.GridKoef.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.GridKoef_CellValueChanged);
             this.GridKoef.CurrentCellDirtyStateChanged += new System.EventHandler(this.GridKoef_CurrentCellDirtyStateChanged);
+            this.GridKoef.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.GridKoef_DataError);
             // 
             // toolStrip2
             // 
