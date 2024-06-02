@@ -35,9 +35,15 @@ namespace WindowsFormsApplication2
         private String command;
         private db mysql;
 
-        private void DB_Message(String message)
+        private void DB_Message(String message, db.TypeError type)
         {
-            SendMessage(logger, new VttEventArgs(command, "Error", message));
+            String lv_type;
+            switch (type)
+            {
+                case db.TypeError.Success: lv_type = "Succcess: "; break;
+                default: lv_type = "Error: "; break;
+            }
+            SendMessage(logger, new VttEventArgs(command, lv_type, message));
         }
 
         public servVTT(config _ini, String _command)

@@ -28,15 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frm_category));
             this.status = new System.Windows.Forms.StatusStrip();
             this.StatusText = new System.Windows.Forms.ToolStripStatusLabel();
             this.StatusTxt = new System.Windows.Forms.ToolStripStatusLabel();
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.ExpandAll = new System.Windows.Forms.ToolStripButton();
-            this.CollapseAll = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.Save = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tree = new System.Windows.Forms.TreeView();
@@ -50,6 +48,7 @@
             this.RightToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.LeftToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.status.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -95,40 +94,12 @@
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ExpandAll,
-            this.CollapseAll,
-            this.toolStripSeparator1,
             this.Save});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(722, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // ExpandAll
-            // 
-            this.ExpandAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.ExpandAll.Image = ((System.Drawing.Image)(resources.GetObject("ExpandAll.Image")));
-            this.ExpandAll.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ExpandAll.Name = "ExpandAll";
-            this.ExpandAll.Size = new System.Drawing.Size(84, 22);
-            this.ExpandAll.Text = "Раскрыть все";
-            this.ExpandAll.Click += new System.EventHandler(this.ExpandAll_Click);
-            // 
-            // CollapseAll
-            // 
-            this.CollapseAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.CollapseAll.Image = ((System.Drawing.Image)(resources.GetObject("CollapseAll.Image")));
-            this.CollapseAll.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.CollapseAll.Name = "CollapseAll";
-            this.CollapseAll.Size = new System.Drawing.Size(83, 22);
-            this.CollapseAll.Text = "Свернуть все";
-            this.CollapseAll.Click += new System.EventHandler(this.CollapseAll_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // Save
             // 
@@ -164,6 +135,7 @@
             this.tree.Name = "tree";
             this.tree.Size = new System.Drawing.Size(307, 431);
             this.tree.TabIndex = 0;
+            this.tree.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tree_BeforeExpand);
             this.tree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tree_BeforeSelect);
             this.tree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tree_AfterSelect);
             // 
@@ -264,6 +236,13 @@
             // 
             this.ContentPanel.Size = new System.Drawing.Size(150, 175);
             // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "132707_folder_icon.png");
+            this.imageList1.Images.SetKeyName(1, "132726_new_document_icon.png");
+            // 
             // frm_category
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -301,12 +280,10 @@
         private System.Windows.Forms.StatusStrip status;
         private System.Windows.Forms.ToolStripStatusLabel StatusText;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton ExpandAll;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TreeView tree;
         private System.Windows.Forms.ToolStripStatusLabel StatusTxt;
         private System.Windows.Forms.ToolStripStatusLabel StatusLabel;
-        private System.Windows.Forms.ToolStripButton CollapseAll;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.DataGridView GridKoef;
         private System.Windows.Forms.ToolStrip toolStrip2;
@@ -317,7 +294,7 @@
         private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
         private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
         private System.Windows.Forms.ToolStripContentPanel ContentPanel;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton Save;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }
