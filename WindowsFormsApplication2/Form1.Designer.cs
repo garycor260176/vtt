@@ -101,8 +101,8 @@
             // CategoryMenu
             // 
             this.CategoryMenu.Name = "CategoryMenu";
-            this.CategoryMenu.Size = new System.Drawing.Size(140, 22);
-            this.CategoryMenu.Text = "Категории...";
+            this.CategoryMenu.Size = new System.Drawing.Size(169, 22);
+            this.CategoryMenu.Text = "Коэффициенты...";
             this.CategoryMenu.Click += new System.EventHandler(this.CategoryMenu_Click);
             // 
             // listBox1
