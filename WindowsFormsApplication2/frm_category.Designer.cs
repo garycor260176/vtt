@@ -131,6 +131,7 @@
             // tree
             // 
             this.tree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tree.HideSelection = false;
             this.tree.Location = new System.Drawing.Point(0, 0);
             this.tree.Name = "tree";
             this.tree.Size = new System.Drawing.Size(307, 431);
