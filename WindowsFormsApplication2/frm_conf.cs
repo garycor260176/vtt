@@ -29,6 +29,7 @@ namespace WindowsFormsApplication2
 
             OnlyError.Checked = conf.OnlyError;
             LogToFile.Checked = conf.LogToFile;
+            shipping_price.Text = conf.shipping_price.ToString();
         }
 
         private void ok_Click(object sender, EventArgs e)
@@ -47,9 +48,25 @@ namespace WindowsFormsApplication2
 
             conf.OnlyError = OnlyError.Checked;
             conf.LogToFile = LogToFile.Checked;
+            conf.shipping_price = Convert.ToSingle(shipping_price.Text);
 
             config.Save(conf);
             this.Close();
+        }
+
+        private void shipping_price_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = !db.CheckKeyPressSum(shipping_price.Text, e);
+        }
+
+        private void shipping_price_Validating(object sender, CancelEventArgs e)
+        {
+            if (!db.CheckSum(shipping_price.Text))
+            {
+                e.Cancel = true;
+                errorProvider1.SetError(shipping_price, "Нужно ввести сумму");
+            }
+            else errorProvider1.SetError(shipping_price, "");
         }
     }
 }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.vtt_login = new System.Windows.Forms.TextBox();
             this.vtt_password = new System.Windows.Forms.TextBox();
@@ -53,10 +54,14 @@
             this.OnlyError = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.LogToFile = new System.Windows.Forms.CheckBox();
+            this.shipping_price = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.vtt_size)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mysql_port)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -284,7 +289,7 @@
             // OnlyError
             // 
             this.OnlyError.AutoSize = true;
-            this.OnlyError.Location = new System.Drawing.Point(12, 259);
+            this.OnlyError.Location = new System.Drawing.Point(14, 281);
             this.OnlyError.Name = "OnlyError";
             this.OnlyError.Size = new System.Drawing.Size(155, 17);
             this.OnlyError.TabIndex = 11;
@@ -302,12 +307,34 @@
             // LogToFile
             // 
             this.LogToFile.AutoSize = true;
-            this.LogToFile.Location = new System.Drawing.Point(188, 259);
+            this.LogToFile.Location = new System.Drawing.Point(190, 281);
             this.LogToFile.Name = "LogToFile";
             this.LogToFile.Size = new System.Drawing.Size(136, 17);
             this.LogToFile.TabIndex = 13;
             this.LogToFile.Text = "Логгирование в файл";
             this.LogToFile.UseVisualStyleBackColor = true;
+            // 
+            // shipping_price
+            // 
+            this.shipping_price.Location = new System.Drawing.Point(127, 249);
+            this.shipping_price.Name = "shipping_price";
+            this.shipping_price.Size = new System.Drawing.Size(100, 20);
+            this.shipping_price.TabIndex = 15;
+            this.shipping_price.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.shipping_price_KeyPress);
+            this.shipping_price.Validating += new System.ComponentModel.CancelEventHandler(this.shipping_price_Validating);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(9, 253);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(112, 13);
+            this.label10.TabIndex = 14;
+            this.label10.Text = "Стоимость доставки";
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
             // 
             // frm_conf
             // 
@@ -316,6 +343,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(479, 301);
+            this.Controls.Add(this.shipping_price);
+            this.Controls.Add(this.label10);
             this.Controls.Add(this.LogToFile);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.OnlyError);
@@ -334,6 +363,7 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mysql_port)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -366,5 +396,8 @@
         private System.Windows.Forms.CheckBox OnlyError;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox LogToFile;
+        private System.Windows.Forms.TextBox shipping_price;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
     }
 }

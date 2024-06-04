@@ -30,6 +30,7 @@ namespace WindowsFormsApplication2
         const string filename = "settings.json";
         public bool OnlyError { get; set; }
         public bool LogToFile { get; set; }
+        public float shipping_price { get; set; }
 
         public vtt_ini vtt;
 

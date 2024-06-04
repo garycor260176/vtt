@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Windows.Forms;
 
 namespace WindowsFormsApplication2
 {
@@ -27,14 +28,25 @@ namespace WindowsFormsApplication2
 
         public class ItemNode
         {
-            public ItemNode(String _Id, String _CatId, String _Name, int _cntkoefs, Boolean _empty)
+            public ItemNode(String _Id, String _CatId, String _Name, int _cntkoefs, Boolean _empty,
+                            Boolean _NotAvailable, Boolean _shipping_price_from_item,
+                            float _price_for_site, float _shipping_price)
             {
                 Id = _Id;
                 CatId = _CatId;
                 Name = _Name;
                 cntkoefs = _cntkoefs;
                 empty = _empty;
+                NotAvailable = _NotAvailable;
+                shipping_price_from_item = _shipping_price_from_item;
+                price_for_site = _price_for_site;
+                shipping_price = _shipping_price;
+
             }
+            public Boolean NotAvailable { get; set; }
+            public Boolean shipping_price_from_item { get; set; }
+            public float price_for_site { get; set; }
+            public float shipping_price { get; set; }
             public String Id { get; set; }
             public String CatId { get; set; }
             public String Name { get; set; }
@@ -46,7 +58,8 @@ namespace WindowsFormsApplication2
 
         public class CatNode
         {
-            public CatNode(String _Id, String _ParentId, String _Name, int _childs, int _cntkoefs, int _cntitems)
+            public CatNode(String _Id, String _ParentId, String _Name, int _childs, int _cntkoefs, int _cntitems,
+                           float _shipping_price)
             {
                 Id = _Id;
                 ParentId = _ParentId;
@@ -54,7 +67,9 @@ namespace WindowsFormsApplication2
                 childs = _childs;
                 cntkoefs = _cntkoefs;
                 cntitems = _cntitems;
+                shipping_price = _shipping_price;
             }
+            public float shipping_price { get; set; }
             public String Id { get; set; }
             public String ParentId { get; set; }
             public String Name { get; set; }
@@ -112,6 +127,21 @@ namespace WindowsFormsApplication2
         private void SendMessage(String message, TypeError type = TypeError.Error)
         {
             if (Notify != null) Notify(message, type);
+        }
+
+        public static Boolean CheckSum(String text){
+            return System.Text.RegularExpressions.Regex.IsMatch(text, "^\\d{0,8}(\\,\\d{1,2})?$");
+        }
+
+        public static Boolean CheckKeyPressSum(String text, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '.') e.KeyChar = ',';
+            if (e.KeyChar == ',' && text.IndexOf(",") >= 0) return false;
+
+            char number = e.KeyChar;
+            if (!Char.IsDigit(number) && number != 8 && number != 44) return false;
+
+            return true;
         }
 
         public OpenResult OpenDB()
@@ -234,8 +264,6 @@ namespace WindowsFormsApplication2
             SendMessage("Сохранено!", TypeError.Success);
             return true;
         }
-
-
         public Boolean InsertCatKoefs(CatNode node)
         {
             Boolean ret = false;
@@ -249,17 +277,20 @@ namespace WindowsFormsApplication2
                 MySqlCommand command = new MySqlCommand("DELETE FROM koef where CatId = '" + node.Id + "'", conn);
                 command.ExecuteNonQuery();
 
-                String insert = "";
-                foreach (CatKoef koef in node.koefs)
+                if (node.koefs.Count > 0)
                 {
-                    if (IsEmptyKoef(koef)) continue;
-                    if (insert.Length > 0) insert = insert + ",";
-                    insert = insert + "('" + node.Id + "', " + koef.sPrice.ToString().Replace(",", ".") + ", " +
-                                                               koef.ePrice.ToString().Replace(",", ".") + ", " +
-                                                               koef.koef.ToString().Replace(",", ".") + ")";
+                    String insert = "";
+                    foreach (CatKoef koef in node.koefs)
+                    {
+                        if (IsEmptyKoef(koef)) continue;
+                        if (insert.Length > 0) insert = insert + ",";
+                        insert = insert + "('" + node.Id + "', " + koef.sPrice.ToString().Replace(",", ".") + ", " +
+                                                                    koef.ePrice.ToString().Replace(",", ".") + ", " +
+                                                                    koef.koef.ToString().Replace(",", ".") + ")";
+                    }
+                    command.CommandText = "INSERT INTO koef VALUES" + insert + ";";
+                    command.ExecuteNonQuery();
                 }
-                command.CommandText = "INSERT INTO koef VALUES" + insert + ";";
-                command.ExecuteNonQuery();
                 ret = true;
             }
             catch (MySqlException ex)
@@ -267,8 +298,20 @@ namespace WindowsFormsApplication2
                 SendMessage(ex.Message);
             }
 
-            if (open == OpenResult.Opened) CloseDB();
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand("CategoryDto_upd", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("aId", node.Id);
+                cmd.Parameters.AddWithValue("ashipping_price", node.shipping_price);
+                cmd.ExecuteNonQuery();
+            }
+            catch (MySqlException ex)
+            {
+                SendMessage(ex.Message);
+            }
 
+            if (open == OpenResult.Opened) CloseDB();
             return ret;
         }
         public Boolean InsertItemKoefs(ItemNode node)
@@ -284,18 +327,36 @@ namespace WindowsFormsApplication2
                 MySqlCommand command = new MySqlCommand("DELETE FROM itemkoef where ItemId = '" + node.Id + "'", conn);
                 command.ExecuteNonQuery();
 
-                String insert = "";
-                foreach (CatKoef koef in node.koefs)
+                if (node.koefs.Count > 0)
                 {
-                    if (IsEmptyKoef(koef)) continue;
-                    if (insert.Length > 0) insert = insert + ",";
-                    insert = insert + "('" + node.Id + "', " + koef.sPrice.ToString().Replace(",", ".") + ", " +
-                                                               koef.ePrice.ToString().Replace(",", ".") + ", " +
-                                                               koef.koef.ToString().Replace(",", ".") + ")";
+                    String insert = "";
+                    foreach (CatKoef koef in node.koefs)
+                    {
+                        if (IsEmptyKoef(koef)) continue;
+                        if (insert.Length > 0) insert = insert + ",";
+                        insert = insert + "('" + node.Id + "', " + koef.sPrice.ToString().Replace(",", ".") + ", " +
+                                                                    koef.ePrice.ToString().Replace(",", ".") + ", " +
+                                                                    koef.koef.ToString().Replace(",", ".") + ")";
+                    }
+                    command.CommandText = "INSERT INTO itemkoef VALUES" + insert + ";";
+                    command.ExecuteNonQuery();
                 }
-                command.CommandText = "INSERT INTO itemkoef VALUES" + insert + ";";
-                command.ExecuteNonQuery();
                 ret = true;
+            }
+            catch (MySqlException ex)
+            {
+                SendMessage(ex.Message);
+            }
+
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand("ItemDto_upd", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("aId", node.Id);
+                cmd.Parameters.AddWithValue("ashipping_price", node.shipping_price);
+                cmd.Parameters.AddWithValue("aNotAvailable", (node.NotAvailable ? "X" : ""));
+                cmd.Parameters.AddWithValue("ashipping_price_from_item", (node.shipping_price_from_item ? "X" : ""));
+                cmd.ExecuteNonQuery();
             }
             catch (MySqlException ex)
             {
@@ -305,6 +366,23 @@ namespace WindowsFormsApplication2
             if (open == OpenResult.Opened) CloseDB();
 
             return ret;
+        }
+
+        private String readerStringField(object obj)
+        {
+            return (Convert.IsDBNull(obj) ? "" : obj).ToString();
+        }
+        private Boolean readerBoolField(object obj)
+        {
+            return ((Convert.IsDBNull(obj) ? "" : obj).ToString() == "X");
+        }
+        private float readerFloatField(object obj)
+        {
+            return Convert.ToSingle((Convert.IsDBNull(obj) ? 0 : obj));
+        }
+        private int readerIntField(object obj)
+        {
+            return Convert.ToInt16((Convert.IsDBNull(obj) ? 0 : obj));
         }
 
         public List<ItemNode> GetItemsByCategory(String CatId)
@@ -322,8 +400,16 @@ namespace WindowsFormsApplication2
                 MySqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    ret.Add(new ItemNode(reader["Id"].ToString(), reader["CatId"].ToString(), reader["Name"].ToString(), 
-                                         Convert.ToInt16(reader["countkoefs"]), false));
+                    ret.Add(new ItemNode(readerStringField(reader["Id"]),
+                                         readerStringField(reader["CatId"]),
+                                         readerStringField(reader["Name"]),        
+                                         readerIntField(reader["countkoefs"]), 
+                                         false,
+                                         readerBoolField(reader["NotAvailable"]),
+                                         readerBoolField(reader["shipping_price_from_item"]),
+                                         readerFloatField(reader["price_for_site"]),
+                                         readerFloatField(reader["shipping_price"])
+                                         ));
                 }
                 reader.Close();
             }
@@ -356,7 +442,6 @@ namespace WindowsFormsApplication2
 
             if (open == OpenResult.Opened) CloseDB();
         }
-
         public void insertItem(vtt.ItemDto item)
         {
             OpenResult open = OpenDB();
@@ -398,7 +483,6 @@ namespace WindowsFormsApplication2
 
             if (open == OpenResult.Opened) CloseDB();
         }
-
         public List<CatNode> GetCategoriesLevel(String ParentId)
         {
             List<CatNode> ret = new List<CatNode>();
@@ -414,7 +498,14 @@ namespace WindowsFormsApplication2
                 MySqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    ret.Add(new CatNode(reader["Id"].ToString(), reader["ParentId"].ToString(), reader["Name"].ToString(), Convert.ToInt16(reader["childcount"]), Convert.ToInt16(reader["countkoefs"]), Convert.ToInt16(reader["countitems"])));
+                    ret.Add(new CatNode(readerStringField(reader["Id"]),
+                                        readerStringField(reader["ParentId"]),
+                                        readerStringField(reader["Name"]),
+                                        readerIntField(reader["childcount"]),
+                                        readerIntField(reader["countkoefs"]),
+                                        readerIntField(reader["countitems"]),
+                                        readerFloatField(reader["shipping_price"])
+                                        ));
                 }
                 reader.Close();
             }

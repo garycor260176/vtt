@@ -145,9 +145,28 @@ namespace WindowsFormsApplication2
             db.NodeT node = (db.NodeT)e.Node.Tag;
             switch (node.type)
             {
-                case db.TypeNode.category: ShowCatKoef(node.cat); break;
-                case db.TypeNode.item: ShowItemKoef(node.item); break;
+                case db.TypeNode.category: ShowCatKoef(node.cat);
+                    shipping_price_from_item.Visible =
+                    NotAvailable.Visible =
+                    label2.Visible = 
+                    price_for_site.Visible = false;
+
+                    shipping_price.Text = node.cat.shipping_price.ToString();
+
+                    break;
+                case db.TypeNode.item: ShowItemKoef(node.item); 
+                    shipping_price_from_item.Visible =
+                    NotAvailable.Visible =
+                    label2.Visible = 
+                    price_for_site.Visible = true;
+
+                    shipping_price_from_item.Checked = node.item.shipping_price_from_item;
+                    shipping_price.Text = node.item.shipping_price.ToString();
+                    price_for_site.Text = node.item.price_for_site.ToString();
+                    NotAvailable.Checked = node.item.NotAvailable;
+                    break;
             }
+            shipping_price_from_cat_CheckedChanged(null, null);
             refresh();
         }
         private void AddCatKoef(db.CatNode node)
@@ -399,6 +418,73 @@ namespace WindowsFormsApplication2
                     GridKoef.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "Ошибка ввода";
                 e.Cancel = true;
                 e.ThrowException = false;
+            }
+        }
+
+        private void shipping_price_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            char number = e.KeyChar;
+            if ((e.KeyChar <= 47 || e.KeyChar >= 58) && number != 8 && number != 44) //цифры, клавиша BackSpace и запятая а ASCII
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void shipping_price_KeyPress_1(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = !db.CheckKeyPressSum(shipping_price.Text, e);
+        }
+
+        private void splitContainer2_Panel1_Validating(object sender, CancelEventArgs e)
+        {
+        }
+
+        private void shipping_price_Validating(object sender, CancelEventArgs e)
+        {
+            if (!db.CheckSum(shipping_price.Text))
+            {
+                e.Cancel = true;
+                errorProvider1.SetError(shipping_price, "Нужно ввести сумму");
+            }
+            else errorProvider1.SetError(shipping_price, ""); 
+        }
+
+        private void shipping_price_from_cat_CheckedChanged(object sender, EventArgs e)
+        {
+            if (shipping_price_from_item.Visible)
+            {
+                shipping_price.Enabled = shipping_price_from_item.Checked;
+            }
+            else
+            {
+                shipping_price.Enabled = true;
+            }
+
+            db.NodeT node = GetSelectedNode();
+            switch (node.type)
+            {
+                case db.TypeNode.category: break;
+                case db.TypeNode.item: node.item.shipping_price_from_item = shipping_price_from_item.Checked; break;
+            }
+        }
+
+        private void shipping_price_TextChanged(object sender, EventArgs e)
+        {
+            db.NodeT node = GetSelectedNode();
+            switch (node.type)
+            {
+                case db.TypeNode.category: node.cat.shipping_price = Convert.ToSingle(shipping_price.Text); break;
+                case db.TypeNode.item: node.item.shipping_price = Convert.ToSingle(shipping_price.Text); break;
+            }
+        }
+
+        private void NotAvailable_CheckedChanged(object sender, EventArgs e)
+        {
+            db.NodeT node = GetSelectedNode();
+            switch (node.type)
+            {
+                case db.TypeNode.category: break;
+                case db.TypeNode.item: node.item.NotAvailable = NotAvailable.Checked; break;
             }
         }
     }
