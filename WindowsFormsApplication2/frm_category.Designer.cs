@@ -40,8 +40,6 @@
             this.tree = new System.Windows.Forms.TreeView();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.shipping_price = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.price_for_site = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.shipping_price_from_item = new System.Windows.Forms.CheckBox();
             this.NotAvailable = new System.Windows.Forms.CheckBox();
@@ -157,7 +155,6 @@
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer2.IsSplitterFixed = true;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -165,18 +162,17 @@
             // splitContainer2.Panel1
             // 
             this.splitContainer2.Panel1.Controls.Add(this.shipping_price);
-            this.splitContainer2.Panel1.Controls.Add(this.label2);
-            this.splitContainer2.Panel1.Controls.Add(this.price_for_site);
             this.splitContainer2.Panel1.Controls.Add(this.label1);
             this.splitContainer2.Panel1.Controls.Add(this.shipping_price_from_item);
             this.splitContainer2.Panel1.Controls.Add(this.NotAvailable);
+            this.splitContainer2.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel1_Paint);
             this.splitContainer2.Panel1.Validating += new System.ComponentModel.CancelEventHandler(this.splitContainer2_Panel1_Validating);
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.toolStripContainer1);
             this.splitContainer2.Size = new System.Drawing.Size(466, 430);
-            this.splitContainer2.SplitterDistance = 113;
+            this.splitContainer2.SplitterDistance = 61;
             this.splitContainer2.TabIndex = 1;
             // 
             // shipping_price
@@ -188,23 +184,6 @@
             this.shipping_price.TextChanged += new System.EventHandler(this.shipping_price_TextChanged);
             this.shipping_price.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.shipping_price_KeyPress_1);
             this.shipping_price.Validating += new System.ComponentModel.CancelEventHandler(this.shipping_price_Validating);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 68);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(87, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Расчетная цена";
-            // 
-            // price_for_site
-            // 
-            this.price_for_site.Location = new System.Drawing.Point(121, 65);
-            this.price_for_site.Name = "price_for_site";
-            this.price_for_site.ReadOnly = true;
-            this.price_for_site.Size = new System.Drawing.Size(100, 20);
-            this.price_for_site.TabIndex = 4;
             // 
             // label1
             // 
@@ -243,11 +222,11 @@
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.GridKoef);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(466, 288);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(466, 340);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(466, 313);
+            this.toolStripContainer1.Size = new System.Drawing.Size(466, 365);
             this.toolStripContainer1.TabIndex = 1;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -261,7 +240,7 @@
             this.GridKoef.Dock = System.Windows.Forms.DockStyle.Fill;
             this.GridKoef.Location = new System.Drawing.Point(0, 0);
             this.GridKoef.Name = "GridKoef";
-            this.GridKoef.Size = new System.Drawing.Size(466, 288);
+            this.GridKoef.Size = new System.Drawing.Size(466, 340);
             this.GridKoef.TabIndex = 1;
             // 
             // toolStrip2
@@ -402,8 +381,6 @@
         private System.Windows.Forms.ToolStripButton Save;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox price_for_site;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox shipping_price_from_item;
         private System.Windows.Forms.CheckBox NotAvailable;

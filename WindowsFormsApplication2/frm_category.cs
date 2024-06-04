@@ -147,22 +147,17 @@ namespace WindowsFormsApplication2
             {
                 case db.TypeNode.category: ShowCatKoef(node.cat);
                     shipping_price_from_item.Visible =
-                    NotAvailable.Visible =
-                    label2.Visible = 
-                    price_for_site.Visible = false;
+                    NotAvailable.Visible = false;
 
                     shipping_price.Text = node.cat.shipping_price.ToString();
 
                     break;
                 case db.TypeNode.item: ShowItemKoef(node.item); 
                     shipping_price_from_item.Visible =
-                    NotAvailable.Visible =
-                    label2.Visible = 
-                    price_for_site.Visible = true;
+                    NotAvailable.Visible = true;
 
                     shipping_price_from_item.Checked = node.item.shipping_price_from_item;
                     shipping_price.Text = node.item.shipping_price.ToString();
-                    price_for_site.Text = node.item.price_for_site.ToString();
                     NotAvailable.Checked = node.item.NotAvailable;
                     break;
             }
@@ -471,10 +466,11 @@ namespace WindowsFormsApplication2
         private void shipping_price_TextChanged(object sender, EventArgs e)
         {
             db.NodeT node = GetSelectedNode();
+            float price = Convert.ToSingle((shipping_price.Text.Length > 0 ? shipping_price.Text : "0"));
             switch (node.type)
             {
-                case db.TypeNode.category: node.cat.shipping_price = Convert.ToSingle(shipping_price.Text); break;
-                case db.TypeNode.item: node.item.shipping_price = Convert.ToSingle(shipping_price.Text); break;
+                case db.TypeNode.category: node.cat.shipping_price = price; break;
+                case db.TypeNode.item: node.item.shipping_price = price; break;
             }
         }
 
@@ -486,6 +482,11 @@ namespace WindowsFormsApplication2
                 case db.TypeNode.category: break;
                 case db.TypeNode.item: node.item.NotAvailable = NotAvailable.Checked; break;
             }
+        }
+
+        private void splitContainer2_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

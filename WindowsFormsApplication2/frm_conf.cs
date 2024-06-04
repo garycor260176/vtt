@@ -48,7 +48,7 @@ namespace WindowsFormsApplication2
 
             conf.OnlyError = OnlyError.Checked;
             conf.LogToFile = LogToFile.Checked;
-            conf.shipping_price = Convert.ToSingle(shipping_price.Text);
+            conf.shipping_price = Convert.ToSingle((shipping_price.Text.Length > 0 ? shipping_price.Text : "0"));
 
             config.Save(conf);
             this.Close();

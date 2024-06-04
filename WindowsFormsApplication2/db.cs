@@ -264,6 +264,31 @@ namespace WindowsFormsApplication2
             SendMessage("Сохранено!", TypeError.Success);
             return true;
         }
+
+        public Boolean RecalcAllPrice( )
+        {
+            Boolean ret = false;
+
+            OpenResult open = OpenDB();
+            if (open == OpenResult.Error) return false;
+
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand("RecalcPriceInCategory", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("aCatId", "");
+                cmd.Parameters.AddWithValue("aConfShippingPrice", ini.shipping_price);
+                cmd.ExecuteNonQuery();
+            }
+            catch (MySqlException ex)
+            {
+                SendMessage(ex.Message);
+            }
+
+            if (open == OpenResult.Opened) CloseDB();
+            return ret;
+        }
+
         public Boolean InsertCatKoefs(CatNode node)
         {
             Boolean ret = false;
@@ -304,6 +329,7 @@ namespace WindowsFormsApplication2
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("aId", node.Id);
                 cmd.Parameters.AddWithValue("ashipping_price", node.shipping_price);
+                cmd.Parameters.AddWithValue("aConfShippingPrice", ini.shipping_price);
                 cmd.ExecuteNonQuery();
             }
             catch (MySqlException ex)
@@ -356,6 +382,7 @@ namespace WindowsFormsApplication2
                 cmd.Parameters.AddWithValue("ashipping_price", node.shipping_price);
                 cmd.Parameters.AddWithValue("aNotAvailable", (node.NotAvailable ? "X" : ""));
                 cmd.Parameters.AddWithValue("ashipping_price_from_item", (node.shipping_price_from_item ? "X" : ""));
+                cmd.Parameters.AddWithValue("aConfShippingPrice", ini.shipping_price);
                 cmd.ExecuteNonQuery();
             }
             catch (MySqlException ex)
@@ -385,7 +412,7 @@ namespace WindowsFormsApplication2
             return Convert.ToInt16((Convert.IsDBNull(obj) ? 0 : obj));
         }
 
-        public List<ItemNode> GetItemsByCategory(String CatId)
+        public List<ItemNode> GetItemsByCategory(String CatId, String aItemId = "")
         {
             List<ItemNode> ret = new List<ItemNode>();
 
@@ -397,6 +424,7 @@ namespace WindowsFormsApplication2
                 MySqlCommand cmd = new MySqlCommand("GetCatItems", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("aCatId", CatId);
+                cmd.Parameters.AddWithValue("aItemId", aItemId);
                 MySqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
