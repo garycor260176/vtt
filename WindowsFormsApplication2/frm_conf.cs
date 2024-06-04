@@ -32,6 +32,11 @@ namespace WindowsFormsApplication2
             shipping_price.Text = conf.shipping_price.ToString();
         }
 
+        private void DB_Message(String message, db.TypeError type)
+        {
+            MessageBox.Show(message);
+        }
+
         private void ok_Click(object sender, EventArgs e)
         {
             config conf = new config();
@@ -48,9 +53,20 @@ namespace WindowsFormsApplication2
 
             conf.OnlyError = OnlyError.Checked;
             conf.LogToFile = LogToFile.Checked;
-            conf.shipping_price = Convert.ToSingle((shipping_price.Text.Length > 0 ? shipping_price.Text : "0"));
+            float new_shipping_price = Convert.ToSingle((shipping_price.Text.Length > 0 ? shipping_price.Text : "0"));
 
+            Boolean upd = false;
+            upd = (new_shipping_price != conf.shipping_price);
+            conf.shipping_price = new_shipping_price;
             config.Save(conf);
+
+            if (upd)
+            {
+                db mysql = new db();
+                mysql.Notify += DB_Message;
+                if (!mysql.RecalcAllPrice()) return;
+            }
+
             this.Close();
         }
 

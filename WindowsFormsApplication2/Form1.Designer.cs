@@ -37,7 +37,11 @@
             this.данныеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CategoryMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.RecalcAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.StatusText = new System.Windows.Forms.ToolStripStatusLabel();
             this.Category.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // Category
@@ -61,6 +65,7 @@
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(43, 20);
             this.toolStripMenuItem1.Text = "Start";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // GetItemPortionMenu
             // 
@@ -93,7 +98,8 @@
             // данныеToolStripMenuItem
             // 
             this.данныеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CategoryMenu});
+            this.CategoryMenu,
+            this.RecalcAll});
             this.данныеToolStripMenuItem.Name = "данныеToolStripMenuItem";
             this.данныеToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
             this.данныеToolStripMenuItem.Text = "Данные";
@@ -101,7 +107,7 @@
             // CategoryMenu
             // 
             this.CategoryMenu.Name = "CategoryMenu";
-            this.CategoryMenu.Size = new System.Drawing.Size(169, 22);
+            this.CategoryMenu.Size = new System.Drawing.Size(176, 22);
             this.CategoryMenu.Text = "Коэффициенты...";
             this.CategoryMenu.Click += new System.EventHandler(this.CategoryMenu_Click);
             // 
@@ -114,11 +120,35 @@
             this.listBox1.Size = new System.Drawing.Size(951, 596);
             this.listBox1.TabIndex = 5;
             // 
+            // RecalcAll
+            // 
+            this.RecalcAll.Name = "RecalcAll";
+            this.RecalcAll.Size = new System.Drawing.Size(176, 22);
+            this.RecalcAll.Text = "Пересчитать цены";
+            this.RecalcAll.Click += new System.EventHandler(this.RecalcAll_Click);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.StatusText});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 598);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(951, 22);
+            this.statusStrip1.TabIndex = 6;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // StatusText
+            // 
+            this.StatusText.Name = "StatusText";
+            this.StatusText.Size = new System.Drawing.Size(118, 17);
+            this.StatusText.Text = "toolStripStatusLabel1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(951, 620);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.Category);
             this.MainMenuStrip = this.Category;
@@ -128,6 +158,8 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Category.ResumeLayout(false);
             this.Category.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -144,6 +176,9 @@
         private System.Windows.Forms.ToolStripMenuItem GetCategoriesMenu;
         private System.Windows.Forms.ToolStripMenuItem данныеToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem CategoryMenu;
+        private System.Windows.Forms.ToolStripMenuItem RecalcAll;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel StatusText;
     }
 }
 

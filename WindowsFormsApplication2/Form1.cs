@@ -29,7 +29,10 @@ namespace WindowsFormsApplication2
         private void StateMenuItems(Boolean state){
             stopMenu.Enabled = !state;
 
+            settingsMenu.Enabled = 
+            CategoryMenu.Enabled = 
             GetItemPortionMenu.Enabled =
+            RecalcAll.Enabled = 
             GetCategoriesMenu.Enabled = state;
         }
 
@@ -67,9 +70,15 @@ namespace WindowsFormsApplication2
             VTT.GetCategories();
         }
 
+        private void DB_Message(String message, db.TypeError type)
+        {
+            StatusText.Text = "Error: " + message;
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             StateMenuItems(true);
+            StatusText.Text = "";
         }
 
         private void Stop_vtt()
@@ -107,6 +116,20 @@ namespace WindowsFormsApplication2
         {
             frm_category frm = new frm_category();
             frm.ShowDialog();
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RecalcAll_Click(object sender, EventArgs e)
+        {
+            StatusText.Text = "Расчет цен... ждите...";
+            db mysql = new db();
+            mysql.Notify += DB_Message;
+            if (!mysql.RecalcAllPrice()) return;
+            StatusText.Text = "Расчет цен завершен!";
         }
     }
 }

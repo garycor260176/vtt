@@ -278,7 +278,9 @@ namespace WindowsFormsApplication2
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("aCatId", "");
                 cmd.Parameters.AddWithValue("aConfShippingPrice", ini.shipping_price);
+                cmd.Parameters.AddWithValue("aNoRecursive", 1);
                 cmd.ExecuteNonQuery();
+                ret = true;
             }
             catch (MySqlException ex)
             {
