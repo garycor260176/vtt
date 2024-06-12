@@ -31,6 +31,7 @@ namespace WindowsFormsApplication2
 
             settingsMenu.Enabled = 
             CategoryMenu.Enabled = 
+            getItemsMenu.Enabled = 
             GetItemPortionMenu.Enabled =
             RecalcAll.Enabled = 
             GetCategoriesMenu.Enabled = state;
@@ -40,16 +41,45 @@ namespace WindowsFormsApplication2
         {
             Invoke((MethodInvoker)delegate
             {
-                listBox1.Items.Add(arg.message);
+                switch (arg.step)
+                {
+                    case TypeStep.start:
+                        listBox1.Items.Add(arg.message);
+                        ProgressBar.Value = 0;
+                        StatusText.Text = arg.message;
+                        break;
+                    case TypeStep.end:
+                        listBox1.Items.Add(arg.message);
+                        ProgressBar.Value = 0;
+                        StatusText.Text = arg.message;
+                        StateMenuItems(true);
+                        break;
+                    case TypeStep.saveStart:
+                        listBox1.Items.Add(arg.message);
+                        ProgressBar.Value = 0;
+                        ProgressBar.Maximum = arg.maxProgressValue;
+                        StatusText.Text = arg.message;
+                        break;
+                    case TypeStep.saveEnd:
+                        listBox1.Items.Add(arg.message);
+                        ProgressBar.Value = 0;
+                        StatusText.Text = arg.message;
+                        break;
+                    case TypeStep.progress:
+                        ProgressBar.Value = arg.progressValue;
+                        StatusText.Text = arg.message;
+                        break;
+                    case TypeStep.other:
+                        listBox1.Items.Add(arg.message);
+                        StatusText.Text = arg.message;
+                        break;
+                }
             });
-            if (arg.done)
-            {
-                StateMenuItems(true);
-            }
         }
 
         private void GetItemPortion()
         {
+            ProgressBar.Value = 0;
             StateMenuItems(false);
             listBox1.Items.Clear();
 
@@ -59,8 +89,22 @@ namespace WindowsFormsApplication2
             VTT.GetItemPortion();
         }
 
+        private void GetItems()
+        {
+            ProgressBar.Value = 0;
+            StateMenuItems(false);
+            listBox1.Items.Clear();
+            ProgressBar.Value = 0;
+
+            Stop_vtt();
+            VTT = new servVTT(readSettings(), "GetItems");
+            VTT.Notify += DisplayMessage;
+            VTT.GetItems();
+        }
+
         private void GetCategories()
         {
+            ProgressBar.Value = 0;
             StateMenuItems(false);
             listBox1.Items.Clear();
 
@@ -83,6 +127,7 @@ namespace WindowsFormsApplication2
 
         private void Stop_vtt()
         {
+            ProgressBar.Value = 0;
             if (VTT != null) VTT.Cancel();
         }
 
@@ -130,6 +175,11 @@ namespace WindowsFormsApplication2
             mysql.Notify += DB_Message;
             if (!mysql.RecalcAllPrice()) return;
             StatusText.Text = "Расчет цен завершен!";
+        }
+
+        private void getItemsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GetItems();
         }
     }
 }

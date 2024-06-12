@@ -11,19 +11,33 @@ using System.IO;
 
 namespace WindowsFormsApplication2
 {
+    public enum TypeStep
+    {
+        start,
+        end,
+        progress,
+        saveStart,
+        saveEnd,
+        other
+    };
+
     public class VttEventArgs : EventArgs
     {
         public String type { get; set; }
         public String command { get; set; }
         public String message { get; set; }
-        public bool done { get; set; }
+        public TypeStep step { get; set; }
+        public int progressValue { get; set; }
+        public int maxProgressValue { get; set; }
 
-        public VttEventArgs(String _command, String _type, String _message, bool _done = false)
+        public VttEventArgs(String _command, String _type, String _message, TypeStep _step = TypeStep.other, int _progressValue = 0, int _pMaxValue = 0)
         {
             command = _command;
             type = _type;
             message = _message;
-            done = _done;
+            step = _step;
+            progressValue = _progressValue;
+            maxProgressValue = _pMaxValue;
         }
     }
 
@@ -77,7 +91,7 @@ namespace WindowsFormsApplication2
             vtt.PortalServiceClient ret = null;
             try
             {
-                BasicHttpBinding binding = new BasicHttpBinding() { MaxReceivedMessageSize = 131072 };
+                BasicHttpBinding binding = new BasicHttpBinding() { MaxReceivedMessageSize = 10000000 };
                 ret = new vtt.PortalServiceClient(binding, new System.ServiceModel.EndpointAddress(ini.vtt.address));
             }
             catch (Exception e0)
@@ -89,7 +103,7 @@ namespace WindowsFormsApplication2
 
         public void GetItemPortion_serv(Boolean hide = false)
         {
-            SendMessage(logger, new VttEventArgs(command, "", "Начало обработки"));
+            SendMessage(logger, new VttEventArgs(command, "", "Начало обработки", TypeStep.start));
 
             if (mysql.OpenDB() == db.OpenResult.Error) return;
 
@@ -124,9 +138,42 @@ namespace WindowsFormsApplication2
             mysql.CloseDB();
         }
 
+        public void GetItems_serv(Boolean hide = false)
+        {
+            SendMessage(logger, new VttEventArgs(command, "", "Начало обработки...", TypeStep.start));
+
+            if (mysql.OpenDB() == db.OpenResult.Error) return;
+
+            vtt.PortalServiceClient client = OpenVtt();
+            if (client == null) return;
+
+            while (true)
+            {
+                if (cts != null && cts.Token.IsCancellationRequested) break;
+                try
+                {
+                    vtt.ItemDto[] items = client.GetItems(ini.vtt.login, ini.vtt.pwd);
+                    if (!ini.OnlyError) SendMessage(logger, new VttEventArgs(command, "Success", "Загружено " + items.Length.ToString() + " элементов!"));
+                    SaveItems(items);
+                }
+                catch (System.ServiceModel.FaultException e1)
+                {
+                    SendMessage(logger, new VttEventArgs(command, "Error", e1.Message));
+                }
+                catch (Exception e2)
+                {
+                    SendMessage(logger, new VttEventArgs(command, "Error", e2.Message));
+                }
+                break;
+            }
+
+            client.Close();
+            mysql.CloseDB();
+        }
+
         public void GetCategories_serv(Boolean hide = false)
         {
-            SendMessage(logger, new VttEventArgs(command, "", "Начало обработки"));
+            SendMessage(logger, new VttEventArgs(command, "", "Начало обработки", TypeStep.start));
 
             if (mysql.OpenDB() == db.OpenResult.Error) return;
 
@@ -182,6 +229,11 @@ namespace WindowsFormsApplication2
             CallService( () => GetItemPortion_serv(false) );
         }
 
+        public void GetItems()
+        {
+            CallService(() => GetItems_serv(false));
+        }
+
         public void GetCategories()
         {
             CallService(() => GetCategories_serv(false));
@@ -193,12 +245,12 @@ namespace WindowsFormsApplication2
             if (cts.Token.IsCancellationRequested)
             {
                 msg = "Обработка прервана";
-                SendMessage(logger, new VttEventArgs(command, "", msg, true));
+                SendMessage(logger, new VttEventArgs(command, "", msg, TypeStep.end));
             }
             else
             {
                 msg = "Обработка завершена";
-                SendMessage(logger, new VttEventArgs(command, "", msg, true));
+                SendMessage(logger, new VttEventArgs(command, "", msg, TypeStep.end));
             }
         }
 
@@ -218,5 +270,22 @@ namespace WindowsFormsApplication2
                 mysql.insertItem(items.Items[i]);
             }
         }
+         private void SaveItems(vtt.ItemDto[] items)
+         {
+             if (items.Length == 0) return;
+
+             SendMessage(logger, new VttEventArgs("", "Ok", "Начало сохранения...", TypeStep.saveStart, 0, items.Length));
+             for (int i = 0; i < items.Length; i++)
+             {
+                 if (cts != null && cts.Token.IsCancellationRequested)
+                 {
+                     SendMessage(logger, new VttEventArgs("", "Error", "Сохранение прервано", TypeStep.saveEnd));
+                     return;
+                 }
+                 mysql.insertItem(items[i]);
+                 SendMessage(null, new VttEventArgs("", "Ok", "Сохранен " + items[i].Name, TypeStep.progress, i + 1));
+             }
+             SendMessage(logger, new VttEventArgs("", "Ok", "Сохранение завершено!", TypeStep.saveEnd));
+         }
     }
 }
